@@ -21,6 +21,11 @@ def update(id):
     return contacts.update(id)
 
 
+@app.route('/contacts/<id>', methods=['DELETE'])
+def delete(id):
+    return contacts.delete(id)
+
+
 @app.route('/contacts', methods=['GET'])
 def get_list():
     return contacts.lists()
