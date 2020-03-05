@@ -1,5 +1,17 @@
 from models import Contact
 from helpers import helper
+from flask import request
+
+
+def create():
+    data = request.json
+
+    insert_id, message, status = Contact.create(data)
+
+    if status != 200:
+        return helper.response({"title": message}, "fail", status)
+    else:
+        return helper.response({"id": insert_id}, "success", status)
 
 
 def lists():
