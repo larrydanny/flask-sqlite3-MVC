@@ -4,7 +4,7 @@ import sqlite3
 
 def create(data):
     try:
-        if checkEmail(data["email"]):
+        if check_user("email", data["email"]):
             return False, "Email already exists!", 400
         else:
             connect, cursor = config.db_connection()
@@ -32,6 +32,45 @@ def insert_data(cursor, data):
     return cursor.lastrowid
 
 
+def update(id, data):
+    try:
+        if check_user("oid", id):
+            connect, cursor = config.db_connection()
+            updated_id = update_data(cursor, id, data)
+            config.db_connection_close(connect)
+
+            return updated_id, "", 200
+        else:
+            return False, "User not Found!", 404
+    except sqlite3.Error as e:
+        return e.args[0], 400
+
+
+def update_data(cursor, id, data):
+    cursor.execute("""UPDATE contacts SET
+                           first_name = :first_name,
+                           last_name = :last_name,
+                           address = :address,
+                           city = :city,
+                           state = :state,
+                           zip_code = :zip_code,
+                           phone = :phone,
+                           email = :email
+                           WHERE oid = :oid""",
+                   {
+                       'first_name': data["firstName"],
+                       'last_name': data["lastName"],
+                       'address': data["address"],
+                       'city': data["city"],
+                       'state': data["state"],
+                       'zip_code': data["zipCode"],
+                       'phone': data["phone"],
+                       'email': data["email"],
+                       'oid': id
+                   })
+    return id
+
+
 def list():
     try:
         connect, cursor = config.db_connection()
@@ -56,11 +95,12 @@ def detail(id):
         return e.args[0], 400
 
 
-def checkEmail(email):
+def check_user(field, value):
     connect, cursor = config.db_connection()
-    cursor.execute(f"SELECT oid, email FROM contacts WHERE email='{email}'")
+    cursor.execute(f"SELECT oid, email FROM contacts WHERE {field}='{value}'")
     record = cursor.fetchone()
     config.db_connection_close(connect)
+    print(record)
 
     if record:
         return True
