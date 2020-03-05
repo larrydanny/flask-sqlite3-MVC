@@ -11,6 +11,11 @@ def health():
     return health.hello()
 
 
+@app.route('/contacts', methods=['POST'])
+def create():
+    return contacts.create()
+
+
 @app.route('/contacts', methods=['GET'])
 def get_list():
     return contacts.lists()
