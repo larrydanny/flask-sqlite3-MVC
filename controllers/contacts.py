@@ -14,6 +14,17 @@ def create():
         return helper.response({"id": insert_id}, "success", status)
 
 
+def update(id):
+    data = request.json
+
+    updated_id, message, status = Contact.update(id, data)
+
+    if status != 200:
+        return helper.response({"title": message}, "fail", status)
+    else:
+        return helper.response({"id": updated_id}, "success", status)
+
+
 def lists():
     records, status = Contact.list()
 
