@@ -25,6 +25,15 @@ def update(id):
         return helper.response({"id": updated_id}, "success", status)
 
 
+def delete(id):
+    deleted_id, message, status = Contact.delete(id)
+
+    if status != 200:
+        return helper.response({"title": message}, "fail", status)
+    else:
+        return helper.response({"id": deleted_id}, "success", status)
+
+
 def lists():
     records, status = Contact.list()
 
