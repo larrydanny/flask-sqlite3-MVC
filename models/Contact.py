@@ -41,7 +41,7 @@ def update(id, data):
 
             return updated_id, "", 200
         else:
-            return False, "User not Found!", 404
+            return False, "Contact not Found!", 404
     except sqlite3.Error as e:
         return e.args[0], 400
 
@@ -66,6 +66,28 @@ def update_data(cursor, id, data):
                        'zip_code': data["zipCode"],
                        'phone': data["phone"],
                        'email': data["email"],
+                       'oid': id
+                   })
+    return id
+
+
+def delete(id):
+    try:
+        if check_user("oid", id):
+            connect, cursor = config.db_connection()
+            deleted_id = delete_data(cursor, id)
+            config.db_connection_close(connect)
+
+            return deleted_id, "", 200
+        else:
+            return False, "Contact not Found!", 404
+    except sqlite3.Error as e:
+        return e.args[0], 400
+
+
+def delete_data(cursor, id):
+    cursor.execute("""DELETE FROM contacts WHERE oid = :oid""",
+                   {
                        'oid': id
                    })
     return id
